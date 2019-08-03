@@ -1,0 +1,4 @@
+.idea
+venv
+store/db.sqlite3
+warehouse/db.sqlite3
