@@ -18,7 +18,10 @@ BASE_DIR = dirname(dirname(os.path.abspath(__file__)))
 ROOT_DIR = dirname(BASE_DIR)
 
 with open(os.path.join(ROOT_DIR, 'config.json'), encoding='utf-8') as inp:
-    WAREHOUSE_API = json.load(inp)['warehouse_api']
+    _config = json.load(inp)
+    WAREHOUSE_API = _config['warehouse']['url']
+    WAREHOUSE_USER = _config['warehouse']['username']
+    WAREHOUSE_PASS = _config['warehouse']['password']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -41,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'store_api',
 ]
@@ -72,6 +78,14 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', )
+}
 
 WSGI_APPLICATION = 'store.wsgi.application'
 

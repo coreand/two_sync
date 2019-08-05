@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import model_to_dict
 
-from warehouse.settings import STORE_API
+from warehouse.settings import STORE_API, STORE_USER, STORE_PASS
 from .models import Order
 
 
@@ -21,7 +21,13 @@ class OrderAdmin(admin.ModelAdmin):
             super().save_model(request, obj, form, change)
         else:
             data = model_to_dict(obj)
-            resp = requests.post(f'http://{STORE_API}/orders/update/', data=data)
+
+            resp = requests.post(f'http://{STORE_API}/auth/',
+                                 data={'username': STORE_USER, 'password': STORE_PASS})
+            token = resp.json()['token']
+
+            headers = {'Authorization': f'Token {token}'}
+            resp = requests.post(f'http://{STORE_API}/orders/update/', data=data, headers=headers)
             if resp.status_code != 200:
                 raise Exception(f'Error sending request to store: {resp.content}')
             super().save_model(request, obj, form, change)

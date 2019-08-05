@@ -14,11 +14,15 @@ import os
 from os.path import dirname
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 BASE_DIR = dirname(dirname(os.path.abspath(__file__)))
 ROOT_DIR = dirname(BASE_DIR)
 
 with open(os.path.join(ROOT_DIR, 'config.json'), encoding='utf-8') as inp:
-    STORE_API = json.load(inp)['store_api']
+    _config = json.load(inp)
+    STORE_API = _config['store']['url']
+    STORE_USER = _config['store']['username']
+    STORE_PASS = _config['store']['password']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -41,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'warehouse_api',
 ]
@@ -75,6 +82,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'warehouse.wsgi.application'
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', )
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
